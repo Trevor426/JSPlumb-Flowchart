@@ -1,4 +1,4 @@
-# JSPlumb-Flowchart
+# Flowchart Editor with JSPlumb
     用JSPlumb编写的流程图(Flowchart)绘制工具
 
     该程序用到相关JS技术：JqueryUI + JsPlumb
