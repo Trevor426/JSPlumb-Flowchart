@@ -8,6 +8,37 @@
     var $pop_mask = $('.pop-mask');
     var $edit_pop = $(".edit-pop");
     /**
+     * 图形库
+     */
+    var shapeMap = {
+        "rectangle": "<svg width='100' height='50' version='1.1'><rect x='0' y='0' width='100' height='50' style='fill:#fff;stroke:black;stroke-width:2;'></rect></svg>",
+        "ellipse":"<svg width='100' height='50' version='1.1'><rect x='2' y='2' rx='50  ' ry='100' width='96' height='46' style='fill:#fff;stroke:black;stroke-width:1;'></rect></svg>",
+        "rhombus":"<svg width='100' height='50' version='1.1'><polygon points='0,25 50,0 100,25 50,50' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
+        "rhomboid":"<svg width='100' height='50' version='1.1'><polygon points='20,1 100,1 80,49 0,49' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
+        "right_trapezoid":"<svg width='100' height='50' version='1.1'><polygon points='10,20 90,1 90,49 10,49' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
+        "isosceles_right_pentagon":"<svg width='100' height='50' version='1.1'><polygon points='1,1 99,1 99,40 50,49 1,40' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
+        "isosceles_trapezoid":"<svg width='100' height='50' version='1.1'><polygon points='1,1 99,1 80,49 20,49' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
+        "isosceles_sexangle":"<svg width='100' height='50' version='1.1'><polygon points='20,1 80,1 99,25 80,49 20,49 1,25' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>"
+    }
+    $(".shape").mouseover(function () {
+        var shape = $(this).attr('data-shape'),
+            text = $(this).attr('data-text' );
+        $('.component-shape').html(shapeMap[shape]);
+        $('.component-name').text(text);
+
+        $(".tooltip").show();
+        // console.log($(".tooltip"));
+        // console.log( $('.component-name'));
+        // console.log(text);
+        // console.log("in");
+    })
+
+        $(".shape").mouseout(function () {
+        // console.log("out");
+            $(".tooltip").hide();
+        });
+
+    /**
      * JSPlumb实例化
      */
     jsPlumb.ready(function () {
@@ -59,7 +90,7 @@
                 endpoint: "Dot",
                 paintStyle: {
                     stroke: "transparent",
-                    fill: "grey",
+                    fill: "white",
                     radius: 4,
                     strokeWidth: 1
                 },
@@ -125,20 +156,6 @@
             });
         }
 
-        /**
-         * 图形库
-         */
-
-        var shapeMap = {
-            "rectangle": "<svg width='100' height='50' version='1.1'><rect x='0' y='0' width='100' height='50' style='fill:#fff;stroke:black;stroke-width:2;'></rect></svg>",
-            "ellipse":"<svg width='100' height='50' version='1.1'><rect x='2' y='2' rx='50  ' ry='100' width='96' height='46' style='fill:#fff;stroke:black;stroke-width:1;'></rect></svg>",
-            "rhombus":"<svg width='100' height='50' version='1.1'><polygon points='0,25 50,0 100,25 50,50' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
-            "rhomboid":"<svg width='100' height='50' version='1.1'><polygon points='20,1 100,1 80,49 0,49' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
-            "right_trapezoid":"<svg width='100' height='50' version='1.1'><polygon points='10,20 90,1 90,49 10,49' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
-            "isosceles_right_pentagon":"<svg width='100' height='50' version='1.1'><polygon points='1,1 99,1 99,40 50,49 1,40' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
-            "isosceles_trapezoid":"<svg width='100' height='50' version='1.1'><polygon points='1,1 99,1 80,49 20,49' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>",
-            "isosceles_sexangle":"<svg width='100' height='50' version='1.1'><polygon points='20,1 80,1 99,25 80,49 20,49 1,25' style='fill:#fff;stroke:#000000;stroke-width:1'/></svg>"
-        }
 
         /**
          * 添加连接点
