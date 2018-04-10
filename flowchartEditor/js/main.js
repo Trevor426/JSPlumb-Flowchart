@@ -20,7 +20,7 @@
     "isosceles_trapezoid":"<svg width='100' height='50' version='1.1'><polygon points='1,1 99,1 80,49 20,49' style='fill:#fff;stroke:#000000;stroke-width:1'></polygon></svg>",
     "isosceles_sexangle":"<svg width='100' height='50' version='1.1'><polygon points='20,1 80,1 99,25 80,49 20,49 1,25' style='fill:#fff;stroke:#000000;stroke-width:1'></polygon></svg>"
   };
-  $(".shape").mouseover(function () {
+  $(".component-box.shape").mouseover(function () {
     let shape = $(this).attr('data-shape'),
       text = $(this).attr('data-text' );
     $('.component-shape').html(shapeMap[shape]);
@@ -36,8 +36,12 @@
       editActive.siblings('.component-text').html(editActive.val());
     }
     $('.active').removeClass('active');
+  }).contextmenu(function () {
+    return false;
   });
-
+  $edit_pop.click(function (e) {
+    e.stopPropagation();
+  });
   /**
    * JSPlumb实例化
    */
@@ -61,7 +65,14 @@
           location: 0.5,
           id: "label",
           cssClass: "aLabel",
-          editable:true,
+          editable:true
+          // events:{
+          //   tap:function() {
+          //     $('.add-label-text').val('');
+          //     $pop_mask.show();
+          //     $edit_pop.show();
+          //   }
+          // }
         }]
       ],
       Container: "canvas"
@@ -122,9 +133,11 @@
      */
     $(document).keypress(function (event) {
       let selectedBox = $('.active.selected-box');
-      if(selectedBox.length <= 0) return;
+      let editActive = $('.edit-text.active');
+      //如果没有选中的模块则阻止监听或者选中的模块正在编辑文字
+      if(selectedBox.length <= 0 || editActive.length >=1) return;
       console.log(event.keyCode);
-      if(event.keyCode&&event.keyCode === 8){
+      if(event.keyCode&&(event.keyCode === 8||event.keyCode === 46)){
         let delId = selectedBox.parent()[0].id;
         instance.removeAllEndpoints(delId);
         //删除组件
@@ -132,6 +145,19 @@
       }
     });
 
+    $('li.shape-delete').click(function (e) {
+      e.stopPropagation();
+      let delId = $('.selected-box.active').parent()[0].id;
+      instance.removeAllEndpoints(delId);
+      $("#"+delId).remove();
+      $(this).parent().removeClass('active');
+    });
+    $('li.text-edit').click(function (e) {
+      let selectedBoxActive = $('.selected-box.active');
+      e.stopPropagation();
+      selectedBoxActive.siblings('.edit-text').addClass('active').val(selectedBoxActive.siblings('.component-text').html());
+      $(this).parent().removeClass('active');
+    });
     /**
      * 绑定事件
      * @method instance.addEndpoint
@@ -144,39 +170,19 @@
         $(this).find(".selected-box").addClass("active");
       }).dblclick(function(e){
         e.stopPropagation();
+        let editActive = $('.edit-text.active');
+        if(editActive.length > 0){
+          editActive.siblings('.component-text').html(editActive.val());
+        }
         $('.edit-text').val($(this).find('.component-text').html());
-        $('.edit-text.active').removeClass('active');
+        editActive.removeClass('active');
         $(this).find(".edit-text").addClass("active");
-      });
-
-      //添加component文本
-      $("#"+newId+" .add-text-button").click(function () {
-        //隐藏按钮
-        $(this).parent().hide();
-        $('#'+newId+' input.add-text').val('');
-        $(this).parent().siblings('.text-editor').show();
-        //显示输入框
-      });
-      $("#"+newId+" .confirm-add-text").click(function () {
-        //获取输入框里的文本
-        let newText = $('#'+newId+' input.add-text').val();
-        $("#"+newId+ " .component-text").text(newText);
-        //添加到newId中
-        $(".edit-label").hide();
-      });
-
-      $("#"+newId+" .delete-component-button").click(function () {
-        //删除组件节点
-        instance.removeAllEndpoints(newId);
-        //删除组件
-        $("#"+newId).remove();
-      });
-      $("#"+newId+" .cancle-edit-button").click(function () {
-        $(".edit-label").hide();
+      }).contextmenu(function (e) {
+        $('.selected-box.active').removeClass('active');
+        $(this).find(".selected-box").addClass("active");
+        $('.edit-shape').addClass('active').css({'top':e.pageY - 75, 'left':e.pageX - 160});
       });
     };
-
-
     /**
      * 添加连接点
      * @method instance.addEndpoint
@@ -194,8 +200,6 @@
       "</div>";
       return commonFirstPart +  shapeMap[shapeTemplate] + commonLastPart;
     };
-
-
     /**
      * create shapes
      * @method addEndpoints 添加节点
@@ -208,7 +212,6 @@
         shape_style,
         shape_template,
         shape_text;
-
       $(shapes).each(function (index,element) {
         shape_id = element.id;
         shape_style = element.style;
@@ -225,7 +228,6 @@
       instance.draggable(shape_id);
       });
     };
-
     /**
      * create connections
      * @method instance.addEndpoint
@@ -265,13 +267,6 @@
 
     let editCon;
     /**
-     * 取消编辑(可将此按钮做成icon或者取消图片)
-     */
-    $(".edit-pop-cancel").click(function () {
-      $pop_mask.hide();
-      $edit_pop.hide();
-    });
-    /**
      * 点击确认按钮添加标签文本
      * @method instance.deleteConnection 删除连线
      * @method {connection}.getOverlay("label").setLabel(String);
@@ -279,7 +274,7 @@
     $(".edit-pop-confirm").click(function () {
       editCon.getOverlay("label").setLabel($('.add-label-text').val());
       $pop_mask.hide();
-      $edit_pop.hide();
+      $edit_pop.removeClass('active');
     });
     /**
      * 点击删除按钮
@@ -288,7 +283,7 @@
     $(".edit-pop-delcon").click(function () {
       instance.deleteConnection(editCon);
       $pop_mask.hide();
-      $edit_pop.hide();
+      $edit_pop.removeClass('active');
     });
 
     /**
@@ -342,14 +337,17 @@
       // 监听新添加的connection
       instance.draggable(jsPlumb.getSelector(".edit-space .shape"), { grid: [20, 20] });
       //conn,originalEvent
-      instance.bind("dblclick", function (conn) {
-        $('.add-label-text').val('');
-        $pop_mask.show();
-        $edit_pop.show();
+      instance.bind("dblclick", function (conn,originalEvent) {
         editCon = conn;
+        $edit_pop.css({ left:originalEvent.clientX - 250 , top:originalEvent.clientY - 100 });
+        $('.add-label-text').val(conn.getOverlay('label').canvas.innerHTML);
+        $edit_pop.addClass('active');
+      });
+      instance.bind("contextmenu", function (conn,originalEvent) {
+        editCon = conn;
+        $('.edit-pop-delcon').addClass('active').css({ left:originalEvent.clientX - 150 , top:originalEvent.clientY - 80 });
       });
     });
-
     /**
      * 拖拽动组件
      **/
@@ -375,7 +373,6 @@
         let shape_template = ui.draggable[0].dataset['shape'],
           shape_text = "";
 
-        // console.log(newId);
         let newShape = checkTemplate(newId,shape_template,shape_text);
         /**
          * 添加新点的组件于画布
@@ -396,7 +393,7 @@
         /**
          * 双击编辑点击事件
          **/
-         bindClickEvent(newId);
+        bindClickEvent(newId);
       }
     });
 
