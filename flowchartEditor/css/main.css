@@ -495,3 +495,31 @@ button.confirm-add-text:hover{
     left: 162px;
     border-top: 1px solid #cccc;
 }
+.selected-box{
+     display: none;
+     position: absolute;
+     width: 110px;
+     height: 60px;
+     border-radius: 4px;
+     z-index: -1;
+     top: -5px;
+     background: #dff0d8;
+ }
+.selected-box.active{
+    display: block;
+}
+.edit-text{
+    display: none;
+    position: absolute;
+    width: 70px;
+    height: 20px;
+    background: white;
+    top: 13px;
+    z-index: 1;
+    outline: none;
+    font-size: 14px;
+    text-align: center;
+}
+.edit-text.active{
+    display: block;
+}
