@@ -52,7 +52,10 @@
     "id":"component_jfap7ras",
     "style":{
       "left":"300px",
-      "top":"50px"
+      "top":"50px",
+      "stroke":"rgb(255, 153, 153)",
+      "fill":"rgb(255, 51, 51)",
+      "textColor":"rgb(255, 255, 255)"
     },
     "template":"ellipse",
     "text":"开始"
@@ -60,7 +63,10 @@
     "id":"component_jfap7s18",
     "style":{
       "left":"300px",
-      "top":"150px"
+      "top":"150px",
+      "stroke":"rgb(0, 0, 0)",
+      "fill":"rgb(255, 255, 255)",
+      "textColor":"rgb(0, 0, 0)"
     },
     "template":"rectangle",
     "text":"流程1"
@@ -68,7 +74,10 @@
     "id":"component_jfap7x1c",
     "style":{
       "left":"300px",
-      "top":"250px"
+      "top":"250px",
+      "stroke":"rgb(0, 0, 0)",
+      "fill":"rgb(255, 255, 255)",
+      "textColor":"rgb(0, 0, 0)"
     },
     "template":"rhombus",
     "text":"判断"
@@ -76,7 +85,10 @@
     "id":"component_jfap7x1d",
     "style":{
       "left":"200px",
-      "top":"350px"
+      "top":"350px",
+      "stroke":"rgb(0, 0, 0)",
+      "fill":"rgb(255, 255, 255)",
+      "textColor":"rgb(0, 0, 0)"
     },
     "template":"rectangle",
     "text":"流程2"
@@ -84,7 +96,10 @@
     "id":"component_jfap7xxx",
     "style":{
       "left":"400px",
-      "top":"350px"
+      "top":"350px",
+      "stroke":"rgb(0, 0, 0)",
+      "fill":"rgb(255, 255, 255)",
+      "textColor":"rgb(0, 0, 0)"
     },
     "template":"rectangle",
     "text":"流程3"
@@ -92,7 +107,10 @@
     "id":"component_jfap7x1f",
     "style":{
       "left":"300px",
-      "top":"450px"
+      "top":"450px",
+      "stroke":"rgb(0, 0, 0)",
+      "fill":"rgb(255, 255, 255)",
+      "textColor":"rgb(0, 0, 0)"
     },
     "template":"ellipse",
     "text":"结束"

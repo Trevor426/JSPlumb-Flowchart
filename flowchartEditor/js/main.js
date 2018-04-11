@@ -20,7 +20,7 @@
     "isosceles_trapezoid":"<svg width='100' height='50' version='1.1'><polygon points='1,1 99,1 80,49 20,49' style='fill:#fff;stroke:#000000;stroke-width:1'></polygon></svg>",
     "isosceles_sexangle":"<svg width='100' height='50' version='1.1'><polygon points='20,1 80,1 99,25 80,49 20,49 1,25' style='fill:#fff;stroke:#000000;stroke-width:1'></polygon></svg>"
   };
-  $(".component-box.shape").mouseover(function () {
+  $(".component-box .shape").mouseover(function () {
     let shape = $(this).attr('data-shape'),
       text = $(this).attr('data-text' );
     $('.component-shape').html(shapeMap[shape]);
@@ -36,6 +36,7 @@
       editActive.siblings('.component-text').html(editActive.val());
     }
     $('.active').removeClass('active');
+    $('.tool.selected').removeClass('selected');
   }).contextmenu(function () {
     return false;
   });
@@ -158,6 +159,30 @@
       selectedBoxActive.siblings('.edit-text').addClass('active').val(selectedBoxActive.siblings('.component-text').html());
       $(this).parent().removeClass('active');
     });
+    $('.tool').click(function () {
+      $('.active.selected').removeClass('selected');
+      $(this).addClass('selected');
+      let className = $('.selected')[0].className;
+      if(className.indexOf('shape-color') !== -1){
+          $('.color-picker').css({left:40});
+      }else if(className.indexOf('font-color')!== -1){
+          $('.color-picker').css({left:65});
+      }else if(className.indexOf('stroke-color')!== -1){
+        $('.color-picker').css({left:90});
+      }
+      $('.color-picker').addClass('active');
+    });
+
+    $('.color-items div').click(function () {
+      let className = $('.selected')[0].className;
+      if(className.indexOf('font-color') !== -1){
+        $('.selected-box.active').siblings('.component-text').css('color','rgb('+ $(this).attr('data-color') +')');
+      }else if(className.indexOf('shape-color')!== -1){
+        $('.selected-box.active').siblings('svg').children().css('fill','rgb('+ $(this).attr('data-color') +')');
+      }else if(className.indexOf('stroke-color')!== -1){
+        $('.selected-box.active').siblings('svg').children().css('stroke','rgb('+ $(this).attr('data-color') +')');
+      }
+    });
     /**
      * 绑定事件
      * @method instance.addEndpoint
@@ -166,8 +191,10 @@
     let bindClickEvent = function(newId){
       $("#"+newId).click(function(e){
         e.stopPropagation();
+        $('.edit-shape.active').removeClass('active');
         $('.selected-box.active').removeClass('active');
         $(this).find(".selected-box").addClass("active");
+        $('.tool-bar .tool').addClass('active');
       }).dblclick(function(e){
         e.stopPropagation();
         let editActive = $('.edit-text.active');
@@ -178,6 +205,7 @@
         editActive.removeClass('active');
         $(this).find(".edit-text").addClass("active");
       }).contextmenu(function (e) {
+        $('.tool-bar .tool').addClass('active');
         $('.selected-box.active').removeClass('active');
         $(this).find(".selected-box").addClass("active");
         $('.edit-shape').addClass('active').css({'top':e.pageY - 75, 'left':e.pageX - 160});
@@ -219,10 +247,11 @@
         shape_text = element.text;
       let newShape = checkTemplate(shape_id,shape_template,shape_text);
       $('.edit-space').append(newShape);
-        $("#"+shape_id).css({
-          'top':element.style.top,
-          'left':element.style.left
-        });
+      $("#"+shape_id).css({
+        'top':element.style.top,
+        'left':element.style.left
+      }).find('.component-text').css('color',element.style.textColor);
+      $("#"+shape_id).find('svg').children().css({fill:element.style.fill,stroke:element.style.stroke});
       addEndpoints(shape_id);
       bindClickEvent(shape_id);
       instance.draggable(shape_id);
@@ -309,7 +338,10 @@
         shape_info.template = element.getAttribute('data-shape');
         shape_info.style = {
           left:element.style.left,
-          top:element.style.top
+          top:element.style.top,
+          fill:$(element).find('svg').children().css('fill'),
+          stroke:$(element).find('svg').children().css('stroke'),
+          textColor:$(element).find('.component-text').css('color')
         };
         shapes_info.push(shape_info);
       });
